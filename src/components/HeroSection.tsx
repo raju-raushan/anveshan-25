@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Users, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ParticleBackground from '@/components/ParticleBackground';
 const HeroSection: React.FC = () => {
   const stats = [{
     icon: Users,
@@ -21,23 +22,20 @@ const HeroSection: React.FC = () => {
     value: 'TechNova Campus'
   }];
   return <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden tech-bg">
+      {/* Particle Background */}
+      <ParticleBackground 
+        particleCount={120}
+        speed={0.05}
+        particleColors={['hsl(220, 100%, 60%)', 'hsl(270, 85%, 65%)', 'hsl(180, 100%, 65%)']}
+        moveParticlesOnHover={true}
+        particleHoverFactor={2}
+        alphaParticles={true}
+        particleBaseSize={60}
+        sizeRandomness={0.6}
+      />
+      
       {/* Animated Background Elements */}
-      <div className="absolute inset-0">
-        {/* Floating Particles */}
-        {Array.from({
-        length: 50
-      }).map((_, i) => <motion.div key={i} className="absolute w-1 h-1 bg-primary/30 rounded-full" style={{
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`
-      }} animate={{
-        y: [0, -30, 0],
-        opacity: [0.3, 0.8, 0.3],
-        scale: [1, 1.2, 1]
-      }} transition={{
-        duration: 3 + Math.random() * 2,
-        repeat: Infinity,
-        delay: Math.random() * 2
-      }} />)}
+      <div className="absolute inset-0" style={{ zIndex: 2 }}>
 
         {/* Tech Grid Overlay */}
         <div className="absolute inset-0 opacity-10">
@@ -58,7 +56,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-6 text-center">
+      <div className="relative container mx-auto px-6 text-center" style={{ zIndex: 10 }}>
         <motion.div initial={{
         opacity: 0,
         y: 50
