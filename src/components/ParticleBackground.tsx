@@ -97,10 +97,10 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
           const dy = mouseRef.current.y - particle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          if (distance < 100) {
-            const force = (100 - distance) / 100;
-            particle.vx += dx * force * 0.001 * particleHoverFactor;
-            particle.vy += dy * force * 0.001 * particleHoverFactor;
+          if (distance < 150 && distance > 0) {
+            const force = (150 - distance) / 150;
+            particle.vx += (dx / distance) * force * 0.02 * particleHoverFactor;
+            particle.vy += (dy / distance) * force * 0.02 * particleHoverFactor;
           }
         }
 
@@ -177,7 +177,8 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
         };
 
         // Create gradient for particle
-        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, projectedSize / 2);
+        const radius = Math.max(1, projectedSize / 2);
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
         const rgbColor = hslToRgb(particle.color);
         gradient.addColorStop(0, `rgba(${rgbColor}, 0.8)`);
         gradient.addColorStop(1, `rgba(${rgbColor}, 0)`);
