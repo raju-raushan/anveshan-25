@@ -128,10 +128,59 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
           ctx.globalAlpha = alpha;
         }
 
+        // Convert HSL to RGB for gradient
+        const hslToRgb = (hslString: string) => {
+          if (hslString.startsWith('#')) {
+            // Handle hex colors
+            const hex = hslString.slice(1);
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            return `${r}, ${g}, ${b}`;
+          }
+          
+          // Extract HSL values
+          const match = hslString.match(/hsl\(([^)]+)\)/);
+          if (!match) return '255, 255, 255'; // fallback to white
+          
+          const [h, s, l] = match[1].split(',').map(v => parseFloat(v.trim().replace('%', '')));
+          
+          const hNorm = h / 360;
+          const sNorm = s / 100;
+          const lNorm = l / 100;
+          
+          const c = (1 - Math.abs(2 * lNorm - 1)) * sNorm;
+          const x = c * (1 - Math.abs(((hNorm * 6) % 2) - 1));
+          const m = lNorm - c / 2;
+          
+          let r, g, b;
+          
+          if (hNorm < 1/6) {
+            r = c; g = x; b = 0;
+          } else if (hNorm < 2/6) {
+            r = x; g = c; b = 0;
+          } else if (hNorm < 3/6) {
+            r = 0; g = c; b = x;
+          } else if (hNorm < 4/6) {
+            r = 0; g = x; b = c;
+          } else if (hNorm < 5/6) {
+            r = x; g = 0; b = c;
+          } else {
+            r = c; g = 0; b = x;
+          }
+          
+          r = Math.round((r + m) * 255);
+          g = Math.round((g + m) * 255);
+          b = Math.round((b + m) * 255);
+          
+          return `${r}, ${g}, ${b}`;
+        };
+
         // Create gradient for particle
         const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, projectedSize / 2);
-        gradient.addColorStop(0, particle.color);
-        gradient.addColorStop(1, particle.color + '00'); // Transparent
+        const rgbColor = hslToRgb(particle.color);
+        gradient.addColorStop(0, `rgba(${rgbColor}, 0.8)`);
+        gradient.addColorStop(1, `rgba(${rgbColor}, 0)`);
         
         ctx.fillStyle = gradient;
         ctx.beginPath();
